@@ -277,14 +277,14 @@
     </section>
 
     <!-- Featured Sections -->
-    <section class="featured">
-        <div class="container">
-            <h2 class="section-title">Recentes</h2>
-            <div class="features-grid">
-                
-            </div>
+<section class="featured">
+    <div class="container">
+        <h2 class="section-title">Recentes</h2>
+        <div class="features-grid" id="posts-container">
+            <!-- Os posts serão carregados aqui via JavaScript -->
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer>
@@ -300,5 +300,35 @@
             <p class="copyright">&copy; 2025 Lueur. Todos os direitos reservados.</p>
         </div>
     </footer>
+    
+<script>
+    // Busca os posts da pasta /posts
+    fetch('/posts.json')
+        .then(response => response.json())
+        .then(posts => {
+            const container = document.getElementById('posts-container');
+            
+            // Ordena os posts pela data (do mais recente)
+            posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Limita a 3 posts (opcional)
+            const recentPosts = posts.slice(0, 3);
+            
+            // Cria os cards para cada post
+            recentPosts.forEach(post => {
+                container.innerHTML += `
+                    <div class="feature-card">
+                        <div class="feature-img" style="background-image: url('${post.image || 'https://i.imgur.com/placeholder.jpg'}');"></div>
+                        <div class="feature-content">
+                            <h3>${post.title}</h3>
+                            <p>${post.body.substring(0, 100)}...</p>
+                            <a href="/posts/${post.slug}" class="btn">Ler Mais</a>
+                        </div>
+                    </div>
+                `;
+            });
+        })
+        .catch(error => console.error('Erro ao carregar posts:', error));
+</script>
 </body>
 </html>
